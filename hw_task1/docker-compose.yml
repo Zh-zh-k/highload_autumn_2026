@@ -50,3 +50,27 @@ services:
         condition: service_healthy
       app-2:
         condition: service_healthy
+  
+  grafana:
+    image: grafana/grafana:11.6.3
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:?Set GRAFANA_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?Set GRAFANA_ADMIN_PASSWORD}
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      - prometheus
+    healthcheck:
+      test:
+        - CMD
+        - wget
+        - -q
+        - -O
+        - /dev/null
+        - http://localhost:3000/api/health
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
