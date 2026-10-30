@@ -74,3 +74,20 @@ services:
       timeout: 3s
       retries: 10
       start_period: 15s
+
+  dashboard-generator:
+    build:
+      context: ./dashboard-generator
+    environment:
+      APP_URL: http://app-1:8000
+      GRAFANA_URL: http://grafana:3000
+      GRAFANA_ADMIN_USER: ${GRAFANA_ADMIN_USER:?Set GRAFANA_ADMIN_USER}
+      GRAFANA_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?Set GRAFANA_ADMIN_PASSWORD}
+    depends_on:
+      app-1:
+        condition: service_healthy
+      app-2:
+        condition: service_healthy
+      grafana:
+        condition: service_healthy
+    restart: "no"
