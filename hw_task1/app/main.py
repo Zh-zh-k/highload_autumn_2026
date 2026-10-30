@@ -83,8 +83,17 @@ async def create_item(item: Item):
 
 @app.get("/items/{id}")
 async def get_item(id: int):
+    if id == -1:
+        raise HTTPException(
+            status_code=500,
+            detail="Simulated internal server error",
+        )
+
     if id not in items:
-        raise HTTPException(status_code=404, detail="Item not found")
+        raise HTTPException(
+            status_code=404,
+            detail="Item not found",
+        )
 
     return {"id": id, **items[id].model_dump()}
 

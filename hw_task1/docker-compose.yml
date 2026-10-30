@@ -91,3 +91,18 @@ services:
       grafana:
         condition: service_healthy
     restart: "no"
+  
+  load-generator:
+    build:
+      context: ./load-generator
+    environment:
+      APP_1_URL: http://app-1:8000
+      APP_2_URL: http://app-2:8000
+    depends_on:
+      app-1:
+        condition: service_healthy
+      app-2:
+        condition: service_healthy
+      dashboard-generator:
+        condition: service_completed_successfully
+    restart: unless-stopped
